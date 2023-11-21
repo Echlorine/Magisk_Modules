@@ -1,0 +1,6 @@
+id=Frpc
+name=Frpc模块
+version=v2023.09.10
+versionCode=2023091000
+author=Cmite(酷安)
+description=[ - ] 实现基于frp穿透内网 (20.4及以上版本使用)
