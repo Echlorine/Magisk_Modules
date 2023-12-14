@@ -1,0 +1,6 @@
+id=Zram_Modify
+name=MIUI 改 ZRAM 大小模块
+version=v2023.12.12
+versionCode=2023121200
+author=Cmite(酷安)
+description=修改类 MIUI 系统 ZRAM 大小(20.2版本及20.2版本以上使用)
