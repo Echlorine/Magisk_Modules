@@ -1,0 +1,49 @@
+#!/bin/sh
+
+MODPATH=${0%/*}
+logFile="$MODPATH/kill.log"
+
+log(){
+    echo -e "Last Updated at "`date +%Y-%m-%d` `date +%H:%M:%S`", Kill following PIDs:" >> ${logFile}
+    printf "%-10s%-12s%s\n" "PID" "RSS" "NAME" >> ${logFile}
+    echo "$1" >> ${logFile}
+    echo "" >> ${logFile}
+}
+
+main() {
+    PIDs=$(ps -e | tail -n +2 | sort -nr -k 5 | awk '
+        function format(num) {
+            t = 0;
+            while (num >= 1024 && t < 3) {
+                num = num / 1024;
+                t = t + 1;
+            }
+            if (t == 1) {
+                f = sprintf("%4.3fMB", num);
+            } else if (t == 2) {
+                f = sprintf("%4.3fGB", num);
+            } else if (t == 3) {
+                f = sprintf("%4.3fTB", num);
+            } else {
+                f = sprintf("%4.3fKB", num);
+            }
+            return f;
+        }
+        {
+            if (!match($NF, /.*(miui|blackshark|xiaomi|zygote|system|init|magisk|riru|storage_isolation|lspd|AdGuardHome|xray|frpc).*/)) {printf"%-10s%-12s%s\n", $2, format($5), $NF;}
+        }
+    ' | head -n 10)
+    log "${PIDs}"
+    killIds=$(echo "${PIDs}" | awk '{print $1}')
+    for PID in ${killIds}
+    do
+        # echo "kill ${PID}"
+        kill ${PID}
+    done
+}
+
+freeRAM=$(dumpsys meminfo | grep "Free RAM:" | awk -F ':' '{print $2}' | sed 's/(.*)//g;s/,//g;s/ //g;s/K//g')
+freeRAMMBytes=`echo "$freeRAM / 1024" | bc`
+if [ $freeRAMMBytes -lt 512 ]; then
+    main
+fi
