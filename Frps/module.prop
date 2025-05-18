@@ -1,0 +1,6 @@
+id=Frps
+name=Frps模块
+version=v2025.05.18
+versionCode=2025051800
+author=Cmite(酷安)
+description=[ - ] 实现基于frp穿透内网 (20.4及以上版本使用)
